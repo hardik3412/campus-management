@@ -35,6 +35,10 @@ LOGIN_REDIRECT_URL = 'student_dashboard'
 INSTALLED_APPS = [
     'channels',
     "core",
+    'widget_tweaks',
+    'tailwind',
+    # 'theme',  # we'll create this next
+    # 'django_browser_reload',  # optional for auto refresh
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

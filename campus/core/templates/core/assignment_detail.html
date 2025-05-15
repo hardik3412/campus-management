@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>{{ assignment.title }}</h2>
+<p><strong>Due:</strong> {{ assignment.due_date }}</p>
+<p>{{ assignment.description }}</p>
+
+{% if user.is_authenticated and not user.is_staff %}
+    <a href="{% url 'submit_assignment' assignment.id %}">📤 Submit Assignment</a>
+{% endif %}
+{% endblock %}

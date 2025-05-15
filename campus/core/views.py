@@ -3,10 +3,8 @@ from pyexpat.errors import messages
 from django.shortcuts import render, redirect
 from .forms import UserForm, StudentForm,AssignmentForm,AssignmentSubmissionForm,AttendanceForm
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
 from .models import Attendance, Student, Course,Assignment,AssignmentSubmission,Notification
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required
+from django.utils import timezone           
 from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -136,20 +134,21 @@ def add_assignment(request):
 
 @login_required
 def assignment_list(request):
-    # Only get submissions if user is a student
     if hasattr(request.user, 'student'):
         submissions = AssignmentSubmission.objects.filter(student=request.user.student)
     else:
-        submissions = AssignmentSubmission.objects.none()  # or handle differently for teachers/admins
+        submissions = AssignmentSubmission.objects.none()
 
-    # other code to get assignments, context, etc.
-    assignments = Assignment.objects.all()  # or filtered
+    assignments = Assignment.objects.all()
+
+    # Build a dictionary: {assignment_id: submission}
+    submission_status = {s.assignment.id: s for s in submissions}
 
     return render(request, 'core/assignment_list.html', {
         'assignments': assignments,
         'submissions': submissions,
+        'submission_status': submission_status,  # ✅ Pass this to the template
     })
-
 
 @login_required
 def submit_assignment(request, assignment_id):
@@ -301,3 +300,8 @@ def student_dashboard(request):
 def attendance_page(request):
     # For now, just render a simple page
     return render(request, 'core/attendance.html')
+
+@login_required
+def assignment_detail(request, pk):
+    assignment = get_object_or_404(Assignment, pk=pk)
+    return render(request, 'core/assignment_detail.html', {'assignment': assignment})
