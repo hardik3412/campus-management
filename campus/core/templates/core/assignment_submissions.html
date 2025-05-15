@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+{% block content %}
+  <h2>Submissions for {{ assignment.title }}</h2>
+  <ul>
+    {% for submission in submissions %}
+      <li>
+        {{ submission.student.user.get_full_name|default:submission.student.user.username }} -
+        Submitted on {{ submission.submitted_at|date:"M d, Y H:i" }} -
+        Grade: {{ submission.grade|default:"Not graded" }} -
+        <a href="{% url 'grade_submission' submission.id %}">Grade</a>
+      </li>
+    {% empty %}
+      <li>No submissions yet.</li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'student_dashboard' %}">Back to Dashboard</a>
+{% endblock %}

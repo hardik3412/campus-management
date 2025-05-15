@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>Welcome, {{ request.user.first_name }} (Teacher)</h2>
+
+<p>This is your teacher dashboard.</p>
+
+<hr>
+
+<h3>Your Assignments</h3>
+{% if assignments %}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Due Date</th>
+        </tr>
+        {% for assignment in assignments %}
+            <tr>
+                <td>{{ assignment.title }}</td>
+                <td>{{ assignment.description }}</td>
+                <td>{{ assignment.due_date|date:"M d, Y" }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No assignments found.</p>
+{% endif %}
+
+<br>
+
+<a href="{% url 'add_assignment' %}">➕ Add New Assignment</a><br>
+<a href="{% url 'attendance_page' %}">📅 Mark Attendance</a>
+
+{% endblock %}

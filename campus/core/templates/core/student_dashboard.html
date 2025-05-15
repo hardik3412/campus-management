@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>Welcome, {{ request.user.first_name }}!</h2>
+<p>This is your student dashboard.</p>
+
+<h3>📊 Attendance Summary</h3>
+<ul>
+    <li>Total Classes: {{ total }}</li>
+    <li>Present: {{ present }}</li>
+    <li>Absent: {{ absent }}</li>
+</ul>
+
+<a href="{% url 'student_attendance' %}">📅 View Detailed Attendance</a>
+{% endblock %}

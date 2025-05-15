@@ -1,0 +1,21 @@
+<form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <table>
+        <tr>
+            <th>Student</th>
+            <th>Present?</th>
+        </tr>
+        {% for form in formset %}
+        <tr>
+            <td>{{ form.instance.student.user.get_full_name }}</td>
+            <td>
+                {{ form.present }}
+                {{ form.student }}  <!-- Hidden student field -->
+                {{ form.id }}       <!-- Hidden id field: REQUIRED -->
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <button type="submit">Submit Attendance</button>
+</form>

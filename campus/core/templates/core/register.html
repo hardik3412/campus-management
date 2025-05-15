@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration</title>
+</head>
+<body>
+    <h2>Student Registration</h2>
+    <form method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>User Info</legend>
+            {{ user_form.as_p }}
+        </fieldset>
+        <fieldset>
+            <legend>Student Info</legend>
+            {{ student_form.as_p }}
+        </fieldset>
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>

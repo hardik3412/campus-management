@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submit Assignment</title>
+</head>
+<body>
+    <h2>Submit Assignment: {{ assignment.title }}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+    <p><a href="{% url 'assignment_list' %}">Back to assignments</a></p>
+</body>
+</html>

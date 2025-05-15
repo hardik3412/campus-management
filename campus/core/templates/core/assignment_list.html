@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+{% load dict_filters %}
+
+{% block content %}
+<h2>Assignments</h2>
+<ul>
+    {% for assignment in assignments %}
+    <li>
+        <strong>{{ assignment.title }}</strong> (Due: {{ assignment.due_date }})<br>
+        {{ assignment.description }}<br>
+
+        {% if not user.is_staff %}
+            {% if submission_status|dict_get:assignment.id %}
+                ✅ Assignment submitted
+                {% with submission=submission_status|dict_get:assignment.id %}
+                    {% if submission.grade %}
+                        <br>📊 Grade: {{ submission.grade }}
+                        <br>📝 Feedback: {{ submission.feedback }}
+                    {% endif %}
+                {% endwith %}
+            {% else %}
+                <a href="{% url 'submit_assignment' assignment.id %}">📤 Submit Assignment</a>
+            {% endif %}
+        {% else %}
+            <a href="{% url 'assignment_submissions' assignment.id %}">View Submissions</a>
+        {% endif %}
+    </li>
+    {% empty %}
+    <li>No assignments available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

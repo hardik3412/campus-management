@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Campus Management System</title>
+    <style>
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .notification-icon .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            font-size: 12px;
+            border-radius: 50%;
+            padding: 2px 6px;
+        }
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 25px;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            width: 300px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 999;
+            padding: 10px;
+        }
+        .notification-dropdown ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .notification-dropdown li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div style="float: right; position: relative;">
+            <div class="notification-icon" onclick="toggleDropdown()">
+                🔔
+                {% if notifications %}
+                    <span class="badge">{{ notifications|length }}</span>
+                {% endif %}
+            </div>
+
+            <div class="notification-dropdown" id="notificationDropdown">
+                <ul>
+                    {% for note in notifications %}
+                        <li>
+                            {{ note.message }}<br>
+                            <small>{{ note.created_at|date:"M d, Y H:i" }}</small>
+                        </li>
+                    {% empty %}
+                        <li>No new notifications.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <a href="{% url 'student_dashboard' %}">Dashboard</a> |
+        <a href="{% url 'assignment_list' %}">Assignments</a> |
+        {% if user.is_staff %}
+            <a href="{% url 'add_assignment' %}">Add Assignment</a> |
+            <a href="{% url 'mark_attendance' 1 %}">Mark Attendance</a> |
+        {% else %}
+            <a href="{% url 'student_attendance' %}">View Attendance</a> |
+        {% endif %}
+        <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+
+    <hr>
+
+    {% block content %}{% endblock %}
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const wasClosed = dropdown.style.display !== 'block';
+            dropdown.style.display = wasClosed ? 'block' : 'none';
+    
+            if (wasClosed) {
+                // Only send the mark-as-read request the first time dropdown is opened
+                fetch("{% url 'mark_notifications_read' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Hide badge
+                        const badge = document.querySelector('.notification-icon .badge');
+                        if (badge) {
+                            badge.remove();
+                        }
+                    }
+                });
+            }
+        }
+    
+        // Optional: Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            const icon = document.querySelector('.notification-icon');
+            const dropdown = document.getElementById('notificationDropdown');
+            if (!icon.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+    
+
+</body>
+</html>

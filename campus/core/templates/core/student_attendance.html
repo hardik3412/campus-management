@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>Attendance Records</h2>
+<table>
+  <tr>
+    <th>Date</th>
+    <th>Status</th>
+  </tr>
+  {% for record in attendance_records %}
+  <tr>
+    <td>{{ record.date }}</td>
+    <td>{{ record.status|capfirst }}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="2">No attendance records found.</td></tr>
+  {% endfor %}
+</table>
+
+{% endblock %}
