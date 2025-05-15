@@ -68,6 +68,7 @@ class AssignmentSubmission(models.Model):
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     message = models.TextField()
+    url = models.URLField(blank=True, null=True)  # New field
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 

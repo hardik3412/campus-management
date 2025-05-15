@@ -57,8 +57,11 @@
                 <ul>
                     {% for note in notifications %}
                         <li>
-                            {{ note.message }}<br>
-                            <small>{{ note.created_at|date:"M d, Y H:i" }}</small>
+                            <a href="{{ note.url|default:'#' }}">
+                                {{ note.message }}<br>
+                                <small>{{ note.created_at|date:"M d, Y H:i" }}</small>
+                            </a>
+                            
                         </li>
                     {% empty %}
                         <li>No new notifications.</li>
@@ -84,40 +87,49 @@
 
     <script>
         function toggleDropdown() {
-            const dropdown = document.getElementById('notificationDropdown');
-            const wasClosed = dropdown.style.display !== 'block';
-            dropdown.style.display = wasClosed ? 'block' : 'none';
-    
-            if (wasClosed) {
-                // Only send the mark-as-read request the first time dropdown is opened
-                fetch("{% url 'mark_notifications_read' %}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Hide badge
-                        const badge = document.querySelector('.notification-icon .badge');
-                        if (badge) {
-                            badge.remove();
-                        }
-                    }
-                });
-            }
+            const dropdown = document.getElementById("notificationDropdown");
+            dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
         }
     
-        // Optional: Close dropdown when clicking outside
-        document.addEventListener('click', function (e) {
-            const icon = document.querySelector('.notification-icon');
-            const dropdown = document.getElementById('notificationDropdown');
-            if (!icon.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.style.display = 'none';
+        // Your existing WebSocket code remains unchanged
+        const socket = new WebSocket(
+            'ws://' + window.location.host + '/ws/notifications/'
+        );
+    
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const dropdown = document.getElementById("notificationDropdown");
+            const badge = document.querySelector(".notification-icon .badge");
+    
+            const newItem = document.createElement('li');
+            newItem.innerHTML = `<a href="${data.url}">${data.message}</a>`;
+            dropdown.querySelector("ul").prepend(newItem);
+    
+            // update badge count
+            let count = parseInt(badge?.innerText || 0);
+            if (badge) {
+                badge.innerText = count + 1;
+            } else {
+                const newBadge = document.createElement("span");
+                newBadge.className = "badge";
+                newBadge.innerText = "1";
+                document.querySelector(".notification-icon").appendChild(newBadge);
+            }
+        };
+    </script>
+    <script>
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById("notificationDropdown");
+            const icon = document.querySelector(".notification-icon");
+    
+            if (!icon.contains(event.target)) {
+                dropdown.style.display = "none";
             }
         });
     </script>
+    
+    
+    
     
 
 </body>
