@@ -25,12 +25,12 @@ A Django-based web application to manage campus activities such as student recor
    ```bash
    git clone git@github.com:hardik3412/campus-management.git
    cd campus-management
-python3 -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
+   python3 -m venv venv
+   source venv/bin/activate  # Linux/Mac
+   venv\Scripts\activate     # Windows
+   python manage.py migrate
+   python manage.py createsuperuser
+   python manage.py runserver
 
 
 
